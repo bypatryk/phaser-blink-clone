@@ -1,76 +1,56 @@
 import { GameObjects, Scene } from 'phaser';
 
 import { EventBus } from '../EventBus';
+import { TextButton } from '../gameObjects/TextButton';
+import { TextH5 } from '../gameObjects/TextH5';
+import { BackgroundImage } from '../gameObjects/BackgroundImage';
 
-export class MainMenu extends Scene
-{
+export class MainMenu extends Scene {
     background: GameObjects.Image;
-    logo: GameObjects.Image;
-    title: GameObjects.Text;
-    logoTween: Phaser.Tweens.Tween | null;
+    startGameBtn: GameObjects.Text;
+    resetGameBtn: GameObjects.Text;
+    highScoreText: GameObjects.Text;
 
-    constructor ()
-    {
+    clickSfx: Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
+
+    highScore: number;
+
+    constructor() {
         super('MainMenu');
     }
 
-    create ()
-    {
-        this.background = this.add.image(512, 384, 'background');
+    preload() {
+        this.clickSfx = this.sound.add('click');
+    }
 
-        this.logo = this.add.image(512, 300, 'logo').setDepth(100);
+    create() {
+        this.background = new BackgroundImage(this);
+        this.add.existing(this.background);
 
-        this.title = this.add.text(512, 460, 'Main Menu', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100);
+        this.startGameBtn = new TextButton(this, this.scale.width / 2, this.scale.height / 2 - 40, 'Start Game');
+        this.add.existing(this.startGameBtn);
+        this.startGameBtn.on('pointerup', () => {
+            this.clickSfx.play();
+            this.scene.start('Game');
+        });
+
+        this.resetGameBtn = new TextButton(this, this.scale.width / 2, this.scale.height / 2 + 40, 'Reset');
+        this.add.existing(this.resetGameBtn);
+        this.resetGameBtn.on('pointerup', () => {
+            this.clickSfx.play();
+            localStorage.clear();
+            this.updateHighScore();
+        });
+
+        this.highScoreText = new TextH5(this, this.scale.width - 24, 24).setOrigin(1, 0).setAlign('right');
+        this.add.existing(this.highScoreText);
+        this.updateHighScore();
 
         EventBus.emit('current-scene-ready', this);
     }
-    
-    changeScene ()
-    {
-        if (this.logoTween)
-        {
-            this.logoTween.stop();
-            this.logoTween = null;
-        }
 
-        this.scene.start('Game');
-    }
-
-    moveLogo (vueCallback: ({ x, y }: { x: number, y: number }) => void)
-    {
-        if (this.logoTween)
-        {
-            if (this.logoTween.isPlaying())
-            {
-                this.logoTween.pause();
-            }
-            else
-            {
-                this.logoTween.play();
-            }
-        } 
-        else
-        {
-            this.logoTween = this.tweens.add({
-                targets: this.logo,
-                x: { value: 750, duration: 3000, ease: 'Back.easeInOut' },
-                y: { value: 80, duration: 1500, ease: 'Sine.easeOut' },
-                yoyo: true,
-                repeat: -1,
-                onUpdate: () => {
-                    if (vueCallback)
-                    {
-                        vueCallback({
-                            x: Math.floor(this.logo.x),
-                            y: Math.floor(this.logo.y)
-                        });
-                    }
-                }
-            });
-        }
+    updateHighScore() {
+        this.highScore = parseInt(localStorage.getItem('highScore') || '0')
+        this.highScoreText.setText(`High Score: ${this.highScore}`);
     }
 }
