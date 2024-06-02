@@ -59,7 +59,7 @@ export class Game extends Scene {
         this.updateScoreText(this.score);
 
         this.highScore = parseInt(localStorage.getItem('highScore') || '0')
-        this.highScoreText = new TextH5(this, this.scale.width - 24, 24, `High Score: ${this.highScore}`).setOrigin(1, 0).setAlign('right');
+        this.highScoreText = new TextH5(this, this.game.canvas.width - 24, 24, `High Score: ${this.highScore}`).setOrigin(1, 0).setAlign('right');
         this.add.existing(this.highScoreText);
 
         this.targetCircle = this.spawnTargetCircle();
@@ -84,8 +84,8 @@ export class Game extends Scene {
         const offset = 12 + this.targetCircleRadius;
 
         return this.add.circle(
-            Phaser.Math.Between(offset, this.scale.width - offset),
-            Phaser.Math.Between(offset, this.scale.height - offset),
+            Phaser.Math.Between(offset, this.game.canvas.width - offset),
+            Phaser.Math.Between(offset, this.game.canvas.height - offset),
             this.targetCircleRadius
         )
             .setStrokeStyle(8, 0xffffff);
@@ -118,17 +118,17 @@ export class Game extends Scene {
 
         this.gameOverSfx.play();
 
-        this.gameOverText = new TextH3(this, this.scale.width / 2, this.scale.height / 2 - 120, 'Game Over').setOrigin(0.5).setAlign('center');
+        this.gameOverText = new TextH3(this, this.game.canvas.width / 2, this.game.canvas.height / 2 - 120, 'Game Over').setOrigin(0.5).setAlign('center');
         this.add.existing(this.gameOverText);
 
-        this.scoreText.setOrigin(0).setPosition(this.scale.width / 2, this.scale.height / 2 - 80).setOrigin(0.5).setAlign('center');
+        this.scoreText.setOrigin(0).setPosition(this.game.canvas.width / 2, this.game.canvas.height / 2 - 80).setOrigin(0.5).setAlign('center');
 
         const highScore = parseInt(localStorage.getItem('highScore') || '0');
         if (this.score > highScore) {
             localStorage.setItem('highScore', String(this.score));
         }
 
-        this.mainMenuBtn = new TextButton(this, this.scale.width / 2, this.scale.height / 2, 'Main Menu');
+        this.mainMenuBtn = new TextButton(this, this.game.canvas.width / 2, this.game.canvas.height / 2, 'Main Menu');
         this.add.existing(this.mainMenuBtn);
         this.mainMenuBtn.on('pointerdown', () => {
             this.clickSfx.play();

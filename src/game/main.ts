@@ -17,7 +17,13 @@ const config: Phaser.Types.Core.GameConfig = {
         Preloader,
         MainMenu,
         MainGame
-    ]
+    ],
+    scale: {
+        parent: 'game-container',
+        mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        zoom: 1,
+    }
 };
 
 const StartGame = (parent: string) => {

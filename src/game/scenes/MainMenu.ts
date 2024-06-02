@@ -27,14 +27,14 @@ export class MainMenu extends Scene {
         this.background = new BackgroundImage(this);
         this.add.existing(this.background);
 
-        this.startGameBtn = new TextButton(this, this.scale.width / 2, this.scale.height / 2 - 40, 'Start Game');
+        this.startGameBtn = new TextButton(this, this.game.canvas.width / 2, this.game.canvas.height / 2 - 40, 'Start Game');
         this.add.existing(this.startGameBtn);
         this.startGameBtn.on('pointerup', () => {
             this.clickSfx.play();
             this.scene.start('Game');
         });
 
-        this.resetGameBtn = new TextButton(this, this.scale.width / 2, this.scale.height / 2 + 40, 'Reset');
+        this.resetGameBtn = new TextButton(this, this.game.canvas.width / 2, this.game.canvas.height / 2 + 40, 'Reset');
         this.add.existing(this.resetGameBtn);
         this.resetGameBtn.on('pointerup', () => {
             this.clickSfx.play();
@@ -42,7 +42,7 @@ export class MainMenu extends Scene {
             this.updateHighScore();
         });
 
-        this.highScoreText = new TextH5(this, this.scale.width - 24, 24).setOrigin(1, 0).setAlign('right');
+        this.highScoreText = new TextH5(this, this.game.canvas.width - 24, 24).setOrigin(1, 0).setAlign('right');
         this.add.existing(this.highScoreText);
         this.updateHighScore();
 
