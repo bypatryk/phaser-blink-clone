@@ -39,17 +39,17 @@ export class MainMenu extends Scene {
         this.resetGameBtn.on('pointerup', () => {
             this.clickSfx.play();
             localStorage.clear();
-            this.updateHighScore();
+            this.updateHighScoreText();
         });
 
         this.highScoreText = new TextH5(this, this.game.canvas.width - 24, 24).setOrigin(1, 0).setAlign('right');
         this.add.existing(this.highScoreText);
-        this.updateHighScore();
+        this.updateHighScoreText();
 
         EventBus.emit('current-scene-ready', this);
     }
 
-    updateHighScore() {
+    updateHighScoreText() {
         this.highScore = parseInt(localStorage.getItem('highScore') || '0')
         this.highScoreText.setText(`High Score: ${this.highScore}`);
     }

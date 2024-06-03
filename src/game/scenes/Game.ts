@@ -56,11 +56,12 @@ export class Game extends Scene {
 
         this.scoreText = new TextH5(this, 24, 24);
         this.add.existing(this.scoreText);
-        this.updateScoreText(this.score);
+        this.updateScoreText();
 
         this.highScore = parseInt(localStorage.getItem('highScore') || '0')
-        this.highScoreText = new TextH5(this, this.game.canvas.width - 24, 24, `High Score: ${this.highScore}`).setOrigin(1, 0).setAlign('right');
+        this.highScoreText = new TextH5(this, this.game.canvas.width - 24, 24).setOrigin(1, 0).setAlign('right');
         this.add.existing(this.highScoreText);
+        this.updateHighScoreText();
 
         this.targetCircle = this.spawnTargetCircle();
 
@@ -76,8 +77,12 @@ export class Game extends Scene {
         EventBus.emit('current-scene-ready', this);
     }
 
-    updateScoreText(score: number) {
-        this.scoreText.setText(`Score: ${score}`);
+    updateScoreText() {
+        this.scoreText.setText(`Score: ${this.score}`);
+    }
+
+    updateHighScoreText() {
+        this.highScoreText.setText(`High Score: ${this.highScore}`);
     }
 
     spawnTargetCircle(): GameObjects.Arc {
@@ -102,7 +107,8 @@ export class Game extends Scene {
     onObjectiveCleared() {
         this.successSfx.play();
 
-        this.updateScoreText(++this.score);
+        this.score++;
+        this.updateScoreText();
         this.cursorCircleRadius = 0;
 
         if (this.score % this.bumpDifficultyEvery === 0) {
@@ -125,7 +131,9 @@ export class Game extends Scene {
 
         const highScore = parseInt(localStorage.getItem('highScore') || '0');
         if (this.score > highScore) {
-            localStorage.setItem('highScore', String(this.score));
+            this.highScore = this.score;
+            localStorage.setItem('highScore', String(this.highScore));
+            this.updateHighScoreText();
         }
 
         this.mainMenuBtn = new TextButton(this, this.game.canvas.width / 2, this.game.canvas.height / 2, 'Main Menu');
